@@ -19,7 +19,7 @@ message_counts = {}
 welcome_messages = {}
 
 class WelcomeMessage:
-    START_TEXT = {
+  START_TEXT = {
       'type': 'section',
       'text': {
         'type' : 'mrkdown',
@@ -30,17 +30,17 @@ class WelcomeMessage:
       }
     }
     
-    DIVIDER = {'type': 'divider'}
+  DIVIDER = {'type': 'divider'}
     
-    def __init__(self, channel, user):
-      self.channel = channel
-      self.user = user
-      self.icon_emoji = ':robot_face:'
-      self.timestamp = ''
-      self.completed = False
+  def __init__(self, channel, user):
+    self.channel = channel
+    self.user = user
+    self.icon_emoji = ':robot_face:'
+    self.timestamp = ''
+    self.completed = False
       
-    def get_message(self):
-      return{
+  def get_message(self):
+    return{
         'ts': self.timestamp,
         'channel': self.channel,
         'username': 'Welcome Robot!',
@@ -52,36 +52,34 @@ class WelcomeMessage:
           ]
         }
     
-    def _get_reaction_task(self):
-      checkmark = ':white_check_mark:'
-      if not self.completed:
-        checkmark = ':white_large_square:'
+  def _get_reaction_task(self):
+    checkmark = ':white_check_mark:'
+    if not self.completed:
+      checkmark = ':white_large_square:'
         
       text = f'{checkmark} *React to this message!*'
         
-      return {'type': 'section', 'text':  {'type': 'mrkdwn', 'text': text}}
+    return {'type': 'section', 'text':  {'type': 'mrkdwn', 'text': text}}
 
 #Event Based
 @slack_event_adapter.on('message')
 def message(payload):
-      event = payload.get('event', {})
-      channel_id = event.get('channel')
-      user_id = event.get('user')
-      text = event.get('text')
-      if user_id != None and BOT_ID != user_id:
-        if user_id in message_counts:
-          message_counts[user_id] += 1
-        else:
-          message_counts[user_id] = 1
+  event = payload.get('event', {})
+  channel_id = event.get('channel')
+  user_id = event.get('user')
+  text = event.get('text')
+  if user_id != None and BOT_ID != user_id:
+    if user_id in message_counts:
+      message_counts[user_id] += 1
+    else:
+      message_counts[user_id] = 1
           # client.chat_postMessage(channel='#test', text=text)
           
-        if text.lower() == 'start':
-          send_welcome_message(channel_id, user_id)
+    if text.lower() == 'start':
+      send_welcome_message(channel_id, user_id)
         
 #Slack Commands
 message_counts = {'user_id' : 0}
-
-
 
 def send_welcome_message(channel, user):
   welcome = WelcomeMessage(channel, user)
